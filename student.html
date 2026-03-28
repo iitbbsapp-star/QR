@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Details</title>
+</head>
+
+<body>
+
+<h2>Student Details</h2>
+
+<p id="data">Loading...</p>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOURKEY",
+  authDomain: "all-in-one-4a582.firebaseapp.com",
+  projectId: "all-in-one-4a582",
+  storageBucket: "all-in-one-4a582.firebasestorage.app",
+  messagingSenderId: "454652251769",
+  appId: "1:454652251769:web:892e670d2fbc527b3c0ea8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+const docRef = doc(db, "students", id);
+const docSnap = await getDoc(docRef);
+
+if(docSnap.exists()){
+
+const data = docSnap.data();
+
+document.getElementById("data").innerHTML =
+"Name: "+data.name+
+"<br>Phone: "+data.phone+
+"<br>Location: "+data.location;
+
+}
+else{
+document.getElementById("data").innerHTML="Student not found";
+}
+
+</script>
+
+</body>
+</html>

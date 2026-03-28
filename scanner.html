@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>QR Scanner</title>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+</head>
+
+<body>
+
+<h2>Scan QR Code</h2>
+
+<div id="reader" style="width:300px;"></div>
+
+<p id="result"></p>
+
+<script type="module">
+
+// Import Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Your Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB1fDsZXzhSMNQIKQm30-wzHwWL8VYl2nc",
+  authDomain: "all-in-one-4a582.firebaseapp.com",
+  projectId: "all-in-one-4a582",
+  storageBucket: "all-in-one-4a582.firebasestorage.app",
+  messagingSenderId: "454652251769",
+  appId: "1:454652251769:web:892e670d2fbc527b3c0ea8",
+  measurementId: "G-WHQXG0PB9F"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+// Function to fetch merchant details
+async function fetchMerchant(id) {
+
+  const docRef = doc(db, "students", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+
+    const data = docSnap.data();
+
+    document.getElementById("result").innerHTML =
+      "Name: " + data.name +
+      "<br>Phone: " + data.phone +
+      "<br>Location: " + data.location;
+
+  } else {
+
+    document.getElementById("result").innerHTML =
+      "No merchant found!";
+
+  }
+}
+
+
+// QR scan success function
+function onScanSuccess(decodedText) {
+
+  document.getElementById("result").innerHTML =
+    "Scanned ID: " + decodedText;
+
+  fetchMerchant(decodedText);
+
+}
+
+
+// Start scanner
+new Html5QrcodeScanner(
+  "reader",
+  { fps: 10, qrbox: 250 }
+).render(onScanSuccess);
+
+</script>
+
+</body>
+</html>
