@@ -2,18 +2,19 @@
 <html>
 <head>
 <title>Student Details</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
 </head>
 
 <body>
 
 <h2>Student Details</h2>
 
-<p id="data">Loading...</p>
+<div id="studentData">Loading...</div>
 
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<script>
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1fDsZXzhSMNQIKQm30-wzHwWL8VYl2nc",
@@ -25,27 +26,37 @@ const firebaseConfig = {
   measurementId: "G-WHQXG0PB9F"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
+// Read ID from URL
 const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+const studentId = params.get("id");
 
-const docRef = doc(db, "students", id);
-const docSnap = await getDoc(docRef);
+if(studentId){
 
-if(docSnap.exists()){
+db.collection("students").doc(studentId).get()
+.then((doc)=>{
 
-const data = docSnap.data();
+if(doc.exists){
 
-document.getElementById("data").innerHTML =
-"Name: "+data.name+
-"<br>Phone: "+data.phone+
-"<br>Location: "+data.location;
+const data = doc.data();
+
+document.getElementById("studentData").innerHTML = `
+<h3>Name: ${data.name}</h3>
+<p>Phone: ${data.phone}</p>
+<p>Location: ${data.loaction}</p>
+`;
 
 }
 else{
-document.getElementById("data").innerHTML="Student not found";
+
+document.getElementById("studentData").innerHTML = "Student not found";
+
+}
+
+});
+
 }
 
 </script>
